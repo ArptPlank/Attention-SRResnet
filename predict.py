@@ -20,7 +20,7 @@ class predict():
         ])
         print(f"The model has {self.count_parameters():,} parameters.")
         self.img_H,self.img_L = self.get_img(path)
-        self.save_path = r"./save_test"
+        self.save_path = r"./test_image"
 
     def count_parameters(self):
         return sum(p.numel() for p in self.model.parameters())
@@ -42,15 +42,15 @@ class predict():
         image_numpy = (image_numpy * 255).astype(np.uint8)
         # 使用PIL保存图像
         image = Image.fromarray(image_numpy)
-        image.save('./save_test/output_image.png')
+        image.save('./test_image/output_image.png')
 
 
     def get_img(self,path):
         img_H = Image.open(path).convert('RGB')
         w,h = img_H.size
         img_L = img_H.resize((w//2,h//2))
-        img_H.save("./save_test/origin.png")
-        img_L.save("./save_test/LR.png")
+        img_H.save("./test_image/origin.png")
+        img_L.save("./test_image/LR.png")
         img_H = self.transformers(img_H)
         img_L = self.transformers(img_L)
         return torch.unsqueeze(img_H,0),torch.unsqueeze(img_L,0)
