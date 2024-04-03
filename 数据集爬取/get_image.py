@@ -6,8 +6,11 @@ import threading
 from PIL import Image
 from io import BytesIO
 from tqdm import tqdm
+import os
 class get_image():
     def __init__(self):
+        if not os.path.exists('./dataset'):
+            os.mkdir('./dataset')
         # 设置最大线程数为10
         self.semaphore = threading.Semaphore(10)
         self.header = {
