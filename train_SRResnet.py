@@ -45,14 +45,6 @@ class train():
         # 按照损失是否减小定义学习率衰减
         self.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min', factor=0.5, patience=25,verbose=True,min_lr=1e-8,threshold=5e-7)
         self.writer = SummaryWriter(log_dir='logs')
-        #测试图片
-        self.test_img = Image.open(r"./dataset/environment/HR_129.jpg")
-        self.test_img = self.test_img.resize((self.size[1] // 2, self.size[0] // 2))
-        self.test_img = self.test_img.convert('RGB')
-        self.test_img = transforms.ToTensor()(self.test_img)
-        self.test_img_HR = Image.open(r"./dataset/environment/HR_129.jpg")
-        self.test_img_HR = self.test_img_HR.convert('RGB')
-        self.test_img_HR = transforms.ToTensor()(self.test_img_HR)
 
     def count_parameters(self):
         return sum(p.numel() for p in self.model.parameters())
@@ -65,7 +57,6 @@ class train():
                 if not os.path.exists('./model'):
                     os.mkdir('./model')
                 torch.save(self.model.state_dict(), f'./model/model_{epoch}.pth')
-            self.get_test_img(epoch=epoch)
             self.model.train()
             for index,(batch_data,batch_target) in enumerate(self.train_data):
                 self.optimizer.zero_grad()
@@ -96,25 +87,6 @@ class train():
         available_memory = total - cached  # 计算可用显存
         return available_memory  # 返回可用显存大小，单位：MB
 
-    def get_test_img(self,epoch=0):
-        # 测试
-        self.model.eval()
-        img = self.test_img.to(self.device)
-        img = img.unsqueeze(0)
-        img = self.model(img)
-        img = img.squeeze(0)
-        image_tensor = img.cpu().squeeze(0)
-        # 转换为numpy数组，并调整数值范围到[0, 255]
-        image_numpy = image_tensor.detach().numpy()
-        image_numpy = np.transpose(image_numpy, (1, 2, 0))  # 从[3, H, W]转换为[H, W, 3]
-        image_numpy = (image_numpy * 255).astype(np.uint8)
-        # 使用PIL保存图像
-        image_numpy = Image.fromarray(image_numpy)
-        image_numpy.save(f'./save_test/output_img_CF.png')
-        self.writer.add_image('output_img', img, epoch)
-        self.writer.add_image('input_img', self.test_img, epoch)
-        self.writer.add_image('target_img', self.test_img_HR, epoch)
-        self.writer.close()
 
 
 if __name__ == "__main__":
