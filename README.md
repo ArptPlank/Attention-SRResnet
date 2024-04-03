@@ -22,8 +22,8 @@
 - 每次开始新的训练会清空上一次的模型文件，如需保留，请提前备份。
 
 ## 效果展示
-![高分辨率原图](./save_test/origin.png)
-![低分辨率原图](./save_test/LR_image.png)
-![模型超分图像](./save_test/output_image.png)
+![高分辨率原图](save_test/origin.png)
+![低分辨率原图](save_test/LR_image.png)
+![模型超分图像](save_test/output_image.png)
 
 ---
